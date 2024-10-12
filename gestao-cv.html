@@ -258,9 +258,12 @@
         function updateMessage() {
             const count = countTodayEntries();
             const messageContainer = document.getElementById('messageContainer');
-            messageContainer.textContent = `Você enviou ${count} currículo(s) hoje, parabéns!`;
+            if (count > 0) {
+                messageContainer.textContent = `Você enviou ${count} currículo(s) hoje, parabéns!`;
+            } else {
+                messageContainer.textContent = `Você não mandou nenhum CV ainda :(`;
+            }
         }
-
 
         window.onload = loadData;
 
@@ -283,7 +286,6 @@
             saveData(cvData);
 
             updateMessage();
-
 
             document.getElementById('cvForm').reset();
         });
