@@ -31,4 +31,4 @@ Este projeto é uma aplicação simples que permite gerenciar os currículos env
 
 1. Clone o repositório para a sua máquina local:
    ```bash
-   git clone https://github.com/seu-usuario/nome-do-repositorio.git
+   git clone https://github.com/SthefanyLara/gestaocv.git
