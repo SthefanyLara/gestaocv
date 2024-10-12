@@ -131,6 +131,19 @@
             font-size: 12px;
             color: gray;
         }
+
+        .editable {
+            border: none;
+            background-color: transparent;
+            font-family: inherit;
+            font-size: inherit;
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+            resize: none;
+            outline: none;
+        }
     </style>
 </head>
 <body>
@@ -151,7 +164,7 @@
         function saveNotes() {
             const notes = [];
             document.querySelectorAll('.note').forEach(note => {
-                const content = note.querySelector('p').textContent;
+                const content = note.querySelector('textarea').value;
                 const status = note.querySelector('.status-label')?.textContent || "";
                 const style = {
                     top: note.style.top,
@@ -178,8 +191,14 @@
                 saveNotes();
             });
 
-            const noteContent = document.createElement('p');
-            noteContent.textContent = content;
+            const noteContent = document.createElement('textarea');
+            noteContent.value = content;
+            noteContent.classList.add('editable');
+            noteContent.addEventListener('blur', saveNotes);
+
+            noteContent.addEventListener('click', function () {
+                noteContent.focus();
+            });
 
             const statusMenu = document.createElement('div');
             statusMenu.classList.add('status-menu');
@@ -249,6 +268,5 @@
 
         loadNotes();
     </script>
-    
 </body>
 </html>
