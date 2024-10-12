@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Quadro de Notas</title>
+    <title>Quadro de Notas - Estilo Retrô</title>
     <style>
         * {
             margin: 0;
@@ -11,108 +11,165 @@
         }
 
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-        }
-
-        .container {
-            width: 90%;
-            max-width: 800px;
-            margin: 30px auto;
-            text-align: center;
+            font-family: 'MS Sans Serif', sans-serif;
+            background-color: #008080;
+            color: #000;
+            padding: 20px;
         }
 
         h1 {
             margin-bottom: 20px;
-            color: #333;
+            color: #fff;
+            text-align: center;
+            font-size: 1.8rem;
+            background: #000080;
+            border: 2px solid #fff;
+            padding: 10px;
+            box-shadow: 2px 2px 0 #000;
         }
 
         .input-container {
             display: flex;
+            justify-content: center;
             align-items: center;
             gap: 10px;
+            margin-bottom: 20px;
         }
 
-        textarea {
-            width: 70%;
-            height: 100px;
-            padding: 10px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        button:hover {
-            background-color: #218838;
-        }
-
-        #noteInput {
-            width: 70%;
+        textarea#noteInput {
+            width: 60%;
             height: 60px;
-            padding: 10px;
-            font-size: 16px;
+            padding: 5px;
+            font-size: 14px;
+            border: 2px solid #000;
+            background-color: #fff;
+            color: #000;
             resize: none;
         }
 
-        #addNoteBtn {
-            padding: 15px 25px;
-            font-size: 16px;
-            margin-left: 10px;
+        button#addNoteBtn {
+            padding: 10px 20px;
+            font-size: 14px;
             cursor: pointer;
+            border: 2px solid #000;
+            background: #c0c0c0;
+            color: #000;
+            box-shadow: 2px 2px 0 #000;
+        }
+
+        button#addNoteBtn:hover {
+            background: #a0a0a0;
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
         }
 
         .board {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: flex-start;
-            position: relative;
+        flex: 1;
+        min-width: 300px;
+        background-color: #f0f0f0;
+        padding: 10px;
+        box-shadow: 2px 2px 0 #000;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        }
+
+        .board h2 {
+            margin-bottom: 10px;
+            color: #000;
+            text-align: center;
+            font-size: 1.2rem;
+            background: #c0c0c0;
+            padding: 5px;
+            border: 2px solid #000;
+        }
+
+        .notes-container {
+        flex-grow: 1;
+        overflow-y: auto;
+        padding-right: 5px;
+        max-height: 360px;
+        }
+
+        .notes-container::-webkit-scrollbar {
+            width: 16px;
+        }
+
+        .notes-container::-webkit-scrollbar-track {
+            background: #c0c0c0;
+            border: 2px solid #000;
+        }
+
+        .notes-container::-webkit-scrollbar-thumb {
+            background: #808080;
+            border: 2px solid #000;
+            box-shadow: inset 2px 2px 0 #fff, inset -2px -2px 0 #000;
+        }
+
+        .notes-container::-webkit-scrollbar-thumb:hover {
+            background: #606060;
+        }
+
+        .notes-container {
+            scrollbar-width: thin;
+            scrollbar-color: #808080 #c0c0c0;
         }
 
         .note {
-            background-color: #fff475;
-            padding: 15px;
-            margin: 10px;
-            width: 200px;
-            min-height: 100px;
-            position: relative;
-            box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+            background-color: #fffae6;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 2px solid #000;
+            box-shadow: 2px 2px 0 #000;
             word-wrap: break-word;
             cursor: grab;
+            display: flex;
+            flex-direction: column;
+            min-height: 120px;
+            max-height: 120px;
+            position: relative;
         }
 
-        .note button {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background: transparent;
+        .note textarea {
+            width: 100%;
             border: none;
-            font-size: 18px;
-            cursor: pointer;
-        }
-
-        .note button:hover {
-            color: red;
+            background-color: transparent;
+            font-family: inherit;
+            font-size: 14px;
+            resize: none;
+            outline: none;
+            overflow: hidden;
+            box-sizing: border-box;
+            min-height: 60px;
+            height: auto;
+            color: #000;
         }
 
         .status-menu {
             position: absolute;
             bottom: 5px;
             right: 5px;
-            font-size: 20px;
+            font-size: 14px;
             cursor: pointer;
+            user-select: none;
         }
 
         .status-dropdown {
             position: absolute;
-            bottom: -70px;
-            right: 0;
+            bottom: 25px;
+            right: 5px;
             display: none;
-            background-color: white;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+            background-color: #fff;
+            border: 1px solid #000;
+            box-shadow: 2px 2px 0 #000;
             padding: 5px;
-            z-index: 999;
+            width: 100px;
+            z-index: 10;
         }
 
         .status-dropdown div {
@@ -121,84 +178,161 @@
         }
 
         .status-dropdown div:hover {
-            background-color: #f0f0f0;
+            background-color: #c0c0c0;
         }
 
-        .status-label {
+        .delete-btn {
             position: absolute;
-            bottom: 5px;
-            left: 5px;
-            font-size: 12px;
-            color: gray;
+            top: 5px;
+            right: 5px;
+            background: transparent;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            color: #000;
         }
 
-        .editable {
-            border: none;
-            background-color: transparent;
-            font-family: inherit;
-            font-size: inherit;
+        .delete-btn:hover {
+            color: red;
+        }
+
+        .board-container {
+            position: relative;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 20;
+            left: 0;
+            top: 0;
             width: 100%;
             height: 100%;
-            padding: 0;
-            margin: 0;
-            resize: none;
-            outline: none;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 2px solid #000;
+            width: 300px;
+            box-shadow: 2px 2px 0 #000;
+        }
+
+        .modal-content h3 {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .modal-buttons button {
+            padding: 10px;
+            font-size: 14px;
+            cursor: pointer;
+            border: 2px solid #000;
+            background: #c0c0c0;
+            color: #000;
+            box-shadow: 2px 2px 0 #000;
+        }
+
+        .modal-buttons button:hover {
+            background: #a0a0a0;
         }
     </style>
 </head>
 <body>
+    <h1>Quadro de Notas - Estilo Windows 95</h1>
+    <div class="input-container">
+        <textarea id="noteInput" placeholder="Digite sua nota aqui..."></textarea>
+        <button id="addNoteBtn">Adicionar Nota</button>
+    </div>
+
     <div class="container">
-        <h1>Quadro de Notas</h1>
-        <div class="input-container">
-            <textarea id="noteInput" placeholder="Digite sua nota aqui..."></textarea>
-            <button id="addNoteBtn">Adicionar Nota</button>
+        <div class="board board-container" id="boardA">
+            <h2>A Fazer</h2>
+            <div class="notes-container" id="notesA">
+            </div>
         </div>
-        <div class="board" id="board"></div>
+
+        <div class="board board-container" id="boardFazendo">
+            <h2>Fazendo</h2>
+            <div class="notes-container" id="notesFazendo">
+            </div>
+        </div>
+
+        <div class="board board-container" id="boardFeito">
+            <h2>Feito</h2>
+            <div class="notes-container" id="notesFeito">
+            </div>
+        </div>
+    </div>
+
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <h3>Tem certeza que deseja excluir esta nota?</h3>
+            <div class="modal-buttons">
+                <button id="confirmDeleteBtn">Sim</button>
+                <button id="cancelDeleteBtn">Não</button>
+            </div>
+        </div>
     </div>
 
     <script>
         const addNoteBtn = document.getElementById('addNoteBtn');
         const noteInput = document.getElementById('noteInput');
-        const board = document.getElementById('board');
+        const notesA = document.getElementById('notesA');
+        const notesFazendo = document.getElementById('notesFazendo');
+        const notesFeito = document.getElementById('notesFeito');
+        const deleteModal = document.getElementById('deleteModal');
+        const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+        const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+
+        let noteToDelete = null;
+
+        function generateId() {
+            return '_' + Math.random().toString(36).substr(2, 9);
+        }
 
         function saveNotes() {
             const notes = [];
             document.querySelectorAll('.note').forEach(note => {
+                const id = note.getAttribute('data-id');
                 const content = note.querySelector('textarea').value;
-                const status = note.querySelector('.status-label')?.textContent || "";
-                const style = {
-                    top: note.style.top,
-                    left: note.style.left
-                };
-                notes.push({ content, status, style });
+                const status = note.getAttribute('data-status') || "A Fazer";
+                notes.push({ id, content, status });
             });
             localStorage.setItem('notes', JSON.stringify(notes));
         }
 
-        function createNote(content, status = "", style = {}) {
+        function createNote(content, status = "A Fazer", id = null) {
             const note = document.createElement('div');
             note.classList.add('note');
             note.setAttribute('draggable', true);
+            note.setAttribute('data-status', status);
+            note.setAttribute('data-id', id || generateId());
 
-            if (style.top) note.style.top = style.top;
-            if (style.left) note.style.left = style.left;
+            if (status.toLowerCase() === 'feito') {
+                note.classList.add('done');
+            }
 
-            const deleteBtn = document.createElement('button');
-            deleteBtn.innerHTML = '&times;';
-            deleteBtn.classList.add('remove-btn');
-            deleteBtn.addEventListener('click', function() {
-                board.removeChild(note);
-                saveNotes();
-            });
+            note.addEventListener('dragstart', dragStart);
+            note.addEventListener('dragend', dragEnd);
 
             const noteContent = document.createElement('textarea');
             noteContent.value = content;
             noteContent.classList.add('editable');
-            noteContent.addEventListener('blur', saveNotes);
-
-            noteContent.addEventListener('click', function () {
-                noteContent.focus();
+            noteContent.setAttribute('placeholder', 'Digite sua nota aqui...');
+            noteContent.addEventListener('input', function() {
+                autoResizeTextarea(noteContent);
+                saveNotes();
             });
+            autoResizeTextarea(noteContent);
 
             const statusMenu = document.createElement('div');
             statusMenu.classList.add('status-menu');
@@ -207,62 +341,106 @@
             const statusDropdown = document.createElement('div');
             statusDropdown.classList.add('status-dropdown');
 
-            const options = ['a fazer', 'fazendo', 'feito'];
+            const options = ['A Fazer', 'Fazendo', 'Feito'];
             options.forEach(option => {
                 const optionDiv = document.createElement('div');
                 optionDiv.textContent = option;
-                optionDiv.addEventListener('click', function() {
-                    statusLabel.textContent = option;
+                optionDiv.addEventListener('click', function(e) {
+                    e.stopPropagation();
                     statusDropdown.style.display = 'none';
+                    note.setAttribute('data-status', option);
+                    if (option.toLowerCase() === 'feito') {
+                        note.classList.add('done');
+                        notesFeito.appendChild(note);
+                    } else if (option.toLowerCase() === 'fazendo') {
+                        note.classList.remove('done');
+                        notesFazendo.appendChild(note);
+                    } else {
+                        note.classList.remove('done');
+                        notesA.appendChild(note);
+                    }
                     saveNotes();
                 });
                 statusDropdown.appendChild(optionDiv);
             });
 
-            statusMenu.addEventListener('click', function() {
+            statusMenu.addEventListener('click', function(e) {
+                e.stopPropagation();
                 statusDropdown.style.display = statusDropdown.style.display === 'block' ? 'none' : 'block';
             });
 
-            const statusLabel = document.createElement('div');
-            statusLabel.classList.add('status-label');
-            statusLabel.textContent = status;
+            const deleteBtn = document.createElement('button');
+            deleteBtn.classList.add('delete-btn');
+            deleteBtn.innerHTML = '&times;';
+            deleteBtn.addEventListener('click', function() {
+                noteToDelete = note;
+                deleteModal.style.display = 'block';
+            });
 
-            note.appendChild(deleteBtn);
             note.appendChild(noteContent);
+            note.appendChild(deleteBtn);
             note.appendChild(statusMenu);
             note.appendChild(statusDropdown);
-            note.appendChild(statusLabel);
-            board.appendChild(note);
 
-            note.addEventListener('dragstart', function(e) {
-                e.dataTransfer.setData('text/plain', null);
-                note.style.opacity = '0.5';
-            });
+            return note;
+        }
 
-            note.addEventListener('dragend', function(e) {
-                note.style.opacity = '1';
-                note.style.position = 'absolute';
-                note.style.left = `${e.pageX - note.offsetWidth / 2}px`;
-                note.style.top = `${e.pageY - note.offsetHeight / 2}px`;
-                saveNotes();
-            });
+        function autoResizeTextarea(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = textarea.scrollHeight + 'px';
+        }
+
+        let draggedNote = null;
+
+        function dragStart(e) {
+            draggedNote = this;
+            e.dataTransfer.effectAllowed = 'move';
+            this.style.opacity = '0.5';
+        }
+
+        function dragEnd(e) {
+            this.style.opacity = '1';
+            draggedNote = null;
+            saveNotes();
         }
 
         function loadNotes() {
             const notes = JSON.parse(localStorage.getItem('notes')) || [];
             notes.forEach(note => {
-                createNote(note.content, note.status, note.style);
+                const newNote = createNote(note.content, note.status, note.id);
+                if (note.status.toLowerCase() === 'feito') {
+                    notesFeito.appendChild(newNote);
+                } else if (note.status.toLowerCase() === 'fazendo') {
+                    notesFazendo.appendChild(newNote);
+                } else {
+                    notesA.appendChild(newNote);
+                }
             });
         }
 
         addNoteBtn.addEventListener('click', function() {
             const noteText = noteInput.value.trim();
             if (noteText !== '') {
-                createNote(noteText);
+                const newNote = createNote(noteText);
+                notesA.appendChild(newNote);
                 saveNotes();
                 noteInput.value = '';
             } else {
                 alert('Por favor, digite alguma coisa na nota.');
+            }
+        });
+
+        cancelDeleteBtn.addEventListener('click', function() {
+            deleteModal.style.display = 'none';
+            noteToDelete = null;
+        });
+
+        confirmDeleteBtn.addEventListener('click', function() {
+            if (noteToDelete) {
+                noteToDelete.parentNode.removeChild(noteToDelete);
+                saveNotes();
+                deleteModal.style.display = 'none';
+                noteToDelete = null;
             }
         });
 
