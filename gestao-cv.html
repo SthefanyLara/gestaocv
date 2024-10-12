@@ -187,6 +187,7 @@
     </div>
 
     <script>
+        // Carregar dados do LocalStorage
         function loadData() {
             const storedData = localStorage.getItem('cvData');
             if (storedData) {
@@ -198,18 +199,21 @@
             updateMessage();
         }
 
+        // Salvar dados no LocalStorage
         function saveData(cvData) {
             localStorage.setItem('cvData', JSON.stringify(cvData));
         }
 
+        // Formatar data no formato brasileiro (dd/mm/aaaa)
         function formatDateBR(dateStr) {
             const [year, month, day] = dateStr.split('-');
             return `${day}/${month}/${year}`;
         }
 
+        // Adicionar uma linha à tabela
         function addRowToTable(empresa, dataEnvio, horaEnvio, status, plataforma, linkVaga, index) {
             const tableBody = document.getElementById('cvTableBody');
-            const newRow = tableBody.insertRow();
+            const newRow = tableBody.insertRow(index);
 
             const empresaCell = newRow.insertCell(0);
             const dataCell = newRow.insertCell(1);
@@ -223,6 +227,7 @@
             dataCell.textContent = dataEnvio;
             horaCell.textContent = horaEnvio;
 
+            // Criar select para alterar o status diretamente na tabela
             const statusSelect = document.createElement('select');
             statusSelect.innerHTML = `
                 <option value="Enviado" ${status === 'Enviado' ? 'selected' : ''}>Enviado</option>
@@ -237,12 +242,14 @@
 
             plataformaCell.textContent = plataforma;
 
+            // Criar link clicável
             const link = document.createElement('a');
             link.href = linkVaga;
             link.textContent = 'Abrir Vaga';
             link.target = '_blank';
             linkCell.appendChild(link);
 
+            // Criar botão de excluir
             const deleteIcon = document.createElement('span');
             deleteIcon.textContent = '🗑️';
             deleteIcon.classList.add('delete-icon');
@@ -252,28 +259,38 @@
             deleteCell.appendChild(deleteIcon);
         }
 
+        // Atualizar o status no LocalStorage e na tabela
         function updateStatus(index, newStatus) {
             const storedData = JSON.parse(localStorage.getItem('cvData'));
             storedData[index].status = newStatus;
             saveData(storedData);
-            loadData();
+
+            // Atualizar apenas a linha do status sem recriar a tabela inteira
+            const statusSelect = document.querySelector(`#cvTableBody tr:nth-child(${index + 1}) select`);
+            statusSelect.value = newStatus;
         }
 
+        // Deletar uma linha da tabela e do LocalStorage
         function deleteRow(index) {
             const storedData = JSON.parse(localStorage.getItem('cvData'));
             storedData.splice(index, 1);
             saveData(storedData);
 
-            document.getElementById('cvTableBody').innerHTML = '';
-            loadData();
+            // Atualizar a tabela removendo a linha sem recriar tudo
+            const tableBody = document.getElementById('cvTableBody');
+            tableBody.deleteRow(index);
+
+            updateMessage(); // Atualizar a mensagem após a exclusão
         }
 
+        // Contar quantos currículos foram enviados hoje
         function countTodayEntries() {
             const storedData = JSON.parse(localStorage.getItem('cvData')) || [];
-            const today = new Date().toISOString().split('T')[0];
+            const today = new Date().toISOString().split('T')[0]; // Data de hoje no formato yyyy-mm-dd
             return storedData.filter(item => item.dataEnvio === today).length;
         }
 
+        // Atualizar a mensagem de currículos enviados hoje
         function updateMessage() {
             const count = countTodayEntries();
             const messageContainer = document.getElementById('messageContainer');
@@ -284,8 +301,10 @@
             }
         }
 
+        // Carregar dados ao iniciar
         window.onload = loadData;
 
+        // Capturar envio do formulário
         document.getElementById('cvForm').addEventListener('submit', function(event) {
             event.preventDefault();
 
@@ -306,6 +325,7 @@
 
             updateMessage();
 
+            // Limpar o formulário
             document.getElementById('cvForm').reset();
         });
     </script>
