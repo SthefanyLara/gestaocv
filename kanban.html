@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Quadro de Notas</title>
+    <style>
+        /* Estilos CSS */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 800px;
+            margin: 30px auto;
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .input-container {
+        display: flex;
+        align-items: center;
+        gap: 10px; /* Espaçamento entre o textarea e o botão */
+        }
+
+        textarea {
+        width: 70%; /* Ajusta a largura do textarea */
+        height: 100px;
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        }
+
+        button:hover {
+        background-color: #218838;
+        }
+
+        #noteInput {
+            width: 70%;
+            height: 60px;
+            padding: 10px;
+            font-size: 16px;
+            resize: none;
+        }
+
+        #addNoteBtn {
+            padding: 15px 25px;
+            font-size: 16px;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        .board {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+            position: relative;
+        }
+
+        .note {
+            background-color: #fff475;
+            padding: 15px;
+            margin: 10px;
+            width: 200px;
+            min-height: 100px;
+            position: relative;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+            word-wrap: break-word;
+            cursor: grab;
+        }
+
+        .note button {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: transparent;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .note button:hover {
+            color: red;
+        }
+
+        /* Estilos para o menu de status */
+        .status-menu {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .status-dropdown {
+            position: absolute;
+            bottom: -70px;
+            right: 0;
+            display: none;
+            background-color: white;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+            padding: 5px;
+        }
+
+        .status-dropdown div {
+            padding: 5px;
+            cursor: pointer;
+        }
+
+        .status-dropdown div:hover {
+            background-color: #f0f0f0;
+        }
+
+        .status-label {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            font-size: 12px;
+            color: gray;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Quadro de Notas</h1>
+        <div class="input-container">
+            <textarea id="noteInput" placeholder="Digite sua nota aqui..."></textarea>
+            <button id="addNoteBtn">Adicionar Nota</button>
+        </div>
+        <div class="board" id="board"></div>
+    </div>
+
+    <script>
+        const addNoteBtn = document.getElementById('addNoteBtn');
+        const noteInput = document.getElementById('noteInput');
+        const board = document.getElementById('board');
+
+        // Função para salvar notas no localStorage
+        function saveNotes() {
+            const notes = [];
+            document.querySelectorAll('.note').forEach(note => {
+                const content = note.querySelector('p').textContent;
+                const status = note.querySelector('.status-label')?.textContent || "";
+                const style = {
+                    top: note.style.top,
+                    left: note.style.left
+                };
+                notes.push({ content, status, style });
+            });
+            localStorage.setItem('notes', JSON.stringify(notes));
+        }
+
+        // Função para criar uma nova nota
+        function createNote(content, status = "", style = {}) {
+            const note = document.createElement('div');
+            note.classList.add('note');
+            note.setAttribute('draggable', true);
+
+            if (style.top) note.style.top = style.top;
+            if (style.left) note.style.left = style.left;
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.innerHTML = '&times;';
+            deleteBtn.classList.add('remove-btn');
+            deleteBtn.addEventListener('click', function() {
+                board.removeChild(note);
+                saveNotes();
+            });
+
+            const noteContent = document.createElement('p');
+            noteContent.textContent = content;
+
+            // Criar o menu de status (três pontinhos)
+            const statusMenu = document.createElement('div');
+            statusMenu.classList.add('status-menu');
+            statusMenu.textContent = '⋮';
+
+            const statusDropdown = document.createElement('div');
+            statusDropdown.classList.add('status-dropdown');
+
+            const options = ['a fazer', 'fazendo', 'feito'];
+            options.forEach(option => {
+                const optionDiv = document.createElement('div');
+                optionDiv.textContent = option;
+                optionDiv.addEventListener('click', function() {
+                    statusLabel.textContent = option;
+                    statusDropdown.style.display = 'none';
+                    saveNotes(); // Salva a alteração no status
+                });
+                statusDropdown.appendChild(optionDiv);
+            });
+
+            statusMenu.addEventListener('click', function() {
+                statusDropdown.style.display = statusDropdown.style.display === 'block' ? 'none' : 'block';
+            });
+
+            const statusLabel = document.createElement('div');
+            statusLabel.classList.add('status-label');
+            statusLabel.textContent = status;
+
+            // Adicionar tudo à nota
+            note.appendChild(deleteBtn);
+            note.appendChild(noteContent);
+            note.appendChild(statusMenu);
+            note.appendChild(statusDropdown);
+            note.appendChild(statusLabel);
+            board.appendChild(note);
+
+            // Função de arrastar e soltar
+            note.addEventListener('dragstart', function(e) {
+                e.dataTransfer.setData('text/plain', null);
+                note.style.opacity = '0.5';
+            });
+
+            note.addEventListener('dragend', function(e) {
+                note.style.opacity = '1';
+                note.style.position = 'absolute';
+                note.style.left = `${e.pageX - note.offsetWidth / 2}px`;
+                note.style.top = `${e.pageY - note.offsetHeight / 2}px`;
+                saveNotes(); // Salva as posições após o arraste
+            });
+        }
+
+        // Função para carregar notas do localStorage
+        function loadNotes() {
+            const notes = JSON.parse(localStorage.getItem('notes')) || [];
+            notes.forEach(note => {
+                createNote(note.content, note.status, note.style);
+            });
+        }
+
+        // Adiciona nota e salva no localStorage
+        addNoteBtn.addEventListener('click', function() {
+            const noteText = noteInput.value.trim();
+            if (noteText !== '') {
+                createNote(noteText);
+                saveNotes();
+                noteInput.value = ''; // Limpa o campo de texto após a nota ser adicionada
+            } else {
+                alert('Por favor, digite alguma coisa na nota.');
+            }
+        });
+
+        // Carregar as notas quando a página for aberta
+        loadNotes();
+    </script>
+    
+</body>
+</html>

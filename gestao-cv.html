@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão de Envios de Currículos</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-family: 'Arial', sans-serif;
+            font-weight: bold;
+        }
+
+        form {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            column-gap: 20px;
+            row-gap: 15px;
+            align-items: center;
+        }
+
+        label {
+            font-size: 16px;
+            color: #333;
+            font-family: 'Arial', sans-serif;
+            font-weight: bold;
+        }
+
+        input[type="text"], input[type="url"], input[type="date"], input[type="time"], select {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-top: 5px;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+
+        button {
+            padding: 10px 15px;
+            font-size: 16px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            grid-column: span 2;
+            justify-self: center;
+            font-family: 'Arial', sans-serif;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            font-family: 'Arial', sans-serif;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            color: #333;
+            font-family: 'Arial', sans-serif;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        a {
+            color: #1a0dab;
+            text-decoration: none;
+            font-family: 'Arial', sans-serif;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .delete-icon {
+            cursor: pointer;
+            color: red;
+        }
+
+        .delete-icon:hover {
+            text-decoration: underline;
+        }
+
+        .message {
+            font-size: 18px;
+            font-weight: bold;
+            color: green;
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Gestão de Envios de Currículos</h1>
+
+        <form id="cvForm">
+            <label for="empresa">Empresa:</label>
+            <input type="text" id="empresa" required>
+
+            <label for="dataEnvio">Data de Envio:</label>
+            <input type="date" id="dataEnvio" required>
+
+            <label for="horaEnvio">Hora de Envio:</label>
+            <input type="time" id="horaEnvio" required>
+
+            <label for="status">Status:</label>
+            <select id="status" required>
+                <option value="Enviado">Enviado</option>
+                <option value="Entrevista">Entrevista</option>
+                <option value="Aguardando Resposta">Aguardando Resposta</option>
+                <option value="Rejeitado">Rejeitado</option>
+            </select>
+
+            <label for="plataforma">Plataforma:</label>
+            <input type="text" id="plataforma" required>
+
+            <label for="linkVaga">Link da Vaga:</label>
+            <input type="url" id="linkVaga" required>
+
+            <button type="submit" class="full-width">Adicionar Registro</button>
+        </form>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Empresa</th>
+                    <th>Data de Envio</th>
+                    <th>Hora de Envio</th>
+                    <th>Status</th>
+                    <th>Plataforma</th>
+                    <th>Link da Vaga</th>
+                    <th>Excluir</th>
+                </tr>
+            </thead>
+            <tbody id="cvTableBody">
+            </tbody>
+        </table>
+
+        <div class="message" id="messageContainer">
+        </div>
+    </div>
+
+    <script>
+        function loadData() {
+            const storedData = localStorage.getItem('cvData');
+            if (storedData) {
+                const cvData = JSON.parse(storedData);
+                cvData.forEach(function(item, index) {
+                    addRowToTable(item.empresa, formatDateBR(item.dataEnvio), item.horaEnvio, item.status, item.plataforma, item.linkVaga, index);
+                });
+            }
+            updateMessage();
+        }
+
+        function saveData(cvData) {
+            localStorage.setItem('cvData', JSON.stringify(cvData));
+        }
+
+        function formatDateBR(dateStr) {
+            const [year, month, day] = dateStr.split('-');
+            return `${day}/${month}/${year}`;
+        }
+
+        function addRowToTable(empresa, dataEnvio, horaEnvio, status, plataforma, linkVaga, index) {
+            const tableBody = document.getElementById('cvTableBody');
+            const newRow = tableBody.insertRow();
+
+            const empresaCell = newRow.insertCell(0);
+            const dataCell = newRow.insertCell(1);
+            const horaCell = newRow.insertCell(2);
+            const statusCell = newRow.insertCell(3);
+            const plataformaCell = newRow.insertCell(4);
+            const linkCell = newRow.insertCell(5);
+            const deleteCell = newRow.insertCell(6);
+
+            empresaCell.textContent = empresa;
+            dataCell.textContent = dataEnvio;
+            horaCell.textContent = horaEnvio;
+            statusCell.textContent = status;
+            plataformaCell.textContent = plataforma;
+
+            const link = document.createElement('a');
+            link.href = linkVaga;
+            link.textContent = 'Abrir Vaga';
+            link.target = '_blank';
+            linkCell.appendChild(link);
+
+            const deleteIcon = document.createElement('span');
+            deleteIcon.textContent = '🗑️';
+            deleteIcon.classList.add('delete-icon');
+            deleteIcon.onclick = function() {
+                deleteRow(index);
+            };
+            deleteCell.appendChild(deleteIcon);
+        }
+
+        function deleteRow(index) {
+            const storedData = JSON.parse(localStorage.getItem('cvData'));
+            storedData.splice(index, 1);
+            saveData(storedData);
+
+            document.getElementById('cvTableBody').innerHTML = '';
+            loadData();
+        }
+
+        function countTodayEntries() {
+            const storedData = JSON.parse(localStorage.getItem('cvData')) || [];
+            const today = new Date().toISOString().split('T')[0];
+            return storedData.filter(item => item.dataEnvio === today).length;
+        }
+
+        function updateMessage() {
+            const count = countTodayEntries();
+            const messageContainer = document.getElementById('messageContainer');
+            messageContainer.textContent = `Você enviou ${count} currículo(s) hoje, parabéns!`;
+        }
+
+
+        window.onload = loadData;
+
+        document.getElementById('cvForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const empresa = document.getElementById('empresa').value;
+            const dataEnvio = document.getElementById('dataEnvio').value;
+            const horaEnvio = document.getElementById('horaEnvio').value;
+            const status = document.getElementById('status').value;
+            const plataforma = document.getElementById('plataforma').value;
+            const linkVaga = document.getElementById('linkVaga').value;
+
+            const storedData = localStorage.getItem('cvData');
+            const cvData = storedData ? JSON.parse(storedData) : [];
+
+            addRowToTable(empresa, formatDateBR(dataEnvio), horaEnvio, status, plataforma, linkVaga, cvData.length);
+
+            cvData.push({ empresa, dataEnvio, horaEnvio, status, plataforma, linkVaga });
+            saveData(cvData);
+
+            updateMessage();
+
+
+            document.getElementById('cvForm').reset();
+        });
+    </script>
+
+</body>
+</html>
