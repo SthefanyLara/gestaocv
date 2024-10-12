@@ -222,7 +222,19 @@
             empresaCell.textContent = empresa;
             dataCell.textContent = dataEnvio;
             horaCell.textContent = horaEnvio;
-            statusCell.textContent = status;
+
+            const statusSelect = document.createElement('select');
+            statusSelect.innerHTML = `
+                <option value="Enviado" ${status === 'Enviado' ? 'selected' : ''}>Enviado</option>
+                <option value="Entrevista" ${status === 'Entrevista' ? 'selected' : ''}>Entrevista</option>
+                <option value="Aguardando Resposta" ${status === 'Aguardando Resposta' ? 'selected' : ''}>Aguardando Resposta</option>
+                <option value="Rejeitado" ${status === 'Rejeitado' ? 'selected' : ''}>Rejeitado</option>
+            `;
+            statusSelect.onchange = function() {
+                updateStatus(index, statusSelect.value);
+            };
+            statusCell.appendChild(statusSelect);
+
             plataformaCell.textContent = plataforma;
 
             const link = document.createElement('a');
@@ -238,6 +250,13 @@
                 deleteRow(index);
             };
             deleteCell.appendChild(deleteIcon);
+        }
+
+        function updateStatus(index, newStatus) {
+            const storedData = JSON.parse(localStorage.getItem('cvData'));
+            storedData[index].status = newStatus;
+            saveData(storedData);
+            loadData();
         }
 
         function deleteRow(index) {

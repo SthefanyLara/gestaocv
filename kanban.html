@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>Quadro de Notas</title>
     <style>
-        /* Estilos CSS */
         * {
             margin: 0;
             padding: 0;
@@ -31,11 +30,11 @@
         .input-container {
         display: flex;
         align-items: center;
-        gap: 10px; /* Espaçamento entre o textarea e o botão */
+        gap: 10px; 
         }
 
         textarea {
-        width: 70%; /* Ajusta a largura do textarea */
+        width: 70%;
         height: 100px;
         padding: 10px;
         font-size: 16px;
@@ -95,7 +94,6 @@
             color: red;
         }
 
-        /* Estilos para o menu de status */
         .status-menu {
             position: absolute;
             bottom: 5px;
@@ -149,7 +147,6 @@
         const noteInput = document.getElementById('noteInput');
         const board = document.getElementById('board');
 
-        // Função para salvar notas no localStorage
         function saveNotes() {
             const notes = [];
             document.querySelectorAll('.note').forEach(note => {
@@ -164,7 +161,6 @@
             localStorage.setItem('notes', JSON.stringify(notes));
         }
 
-        // Função para criar uma nova nota
         function createNote(content, status = "", style = {}) {
             const note = document.createElement('div');
             note.classList.add('note');
@@ -184,7 +180,6 @@
             const noteContent = document.createElement('p');
             noteContent.textContent = content;
 
-            // Criar o menu de status (três pontinhos)
             const statusMenu = document.createElement('div');
             statusMenu.classList.add('status-menu');
             statusMenu.textContent = '⋮';
@@ -199,7 +194,7 @@
                 optionDiv.addEventListener('click', function() {
                     statusLabel.textContent = option;
                     statusDropdown.style.display = 'none';
-                    saveNotes(); // Salva a alteração no status
+                    saveNotes();
                 });
                 statusDropdown.appendChild(optionDiv);
             });
@@ -212,7 +207,6 @@
             statusLabel.classList.add('status-label');
             statusLabel.textContent = status;
 
-            // Adicionar tudo à nota
             note.appendChild(deleteBtn);
             note.appendChild(noteContent);
             note.appendChild(statusMenu);
@@ -220,7 +214,6 @@
             note.appendChild(statusLabel);
             board.appendChild(note);
 
-            // Função de arrastar e soltar
             note.addEventListener('dragstart', function(e) {
                 e.dataTransfer.setData('text/plain', null);
                 note.style.opacity = '0.5';
@@ -231,11 +224,10 @@
                 note.style.position = 'absolute';
                 note.style.left = `${e.pageX - note.offsetWidth / 2}px`;
                 note.style.top = `${e.pageY - note.offsetHeight / 2}px`;
-                saveNotes(); // Salva as posições após o arraste
+                saveNotes();
             });
         }
 
-        // Função para carregar notas do localStorage
         function loadNotes() {
             const notes = JSON.parse(localStorage.getItem('notes')) || [];
             notes.forEach(note => {
@@ -243,19 +235,17 @@
             });
         }
 
-        // Adiciona nota e salva no localStorage
         addNoteBtn.addEventListener('click', function() {
             const noteText = noteInput.value.trim();
             if (noteText !== '') {
                 createNote(noteText);
                 saveNotes();
-                noteInput.value = ''; // Limpa o campo de texto após a nota ser adicionada
+                noteInput.value = '';
             } else {
                 alert('Por favor, digite alguma coisa na nota.');
             }
         });
 
-        // Carregar as notas quando a página for aberta
         loadNotes();
     </script>
     
