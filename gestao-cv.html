@@ -6,7 +6,7 @@
     <title>Gestão de Envios de Currículos</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: "Arial", sans-serif;
             background-color: #f9f9f9;
             margin: 0;
             padding: 0;
@@ -25,7 +25,7 @@
             text-align: center;
             color: #333;
             margin-bottom: 30px;
-            font-family: 'Arial', sans-serif;
+            font-family: "Arial", sans-serif;
             font-weight: bold;
         }
 
@@ -40,7 +40,7 @@
         label {
             font-size: 16px;
             color: #333;
-            font-family: 'Arial', sans-serif;
+            font-family: "Arial", sans-serif;
             font-weight: bold;
         }
 
@@ -52,7 +52,7 @@
             border-radius: 4px;
             margin-top: 5px;
             box-sizing: border-box;
-            font-family: 'Arial', sans-serif;
+            font-family: "Arial", sans-serif;
         }
 
         .full-width {
@@ -69,7 +69,7 @@
             cursor: pointer;
             grid-column: span 2;
             justify-self: center;
-            font-family: 'Arial', sans-serif;
+            font-family: "Arial", sans-serif;
         }
 
         button:hover {
@@ -89,13 +89,13 @@
         th, td {
             padding: 12px;
             text-align: left;
-            font-family: 'Arial', sans-serif;
+            font-family: "Arial", sans-serif;
         }
 
         th {
             background-color: #f2f2f2;
             color: #333;
-            font-family: 'Arial', sans-serif;
+            font-family: "Arial", sans-serif;
         }
 
         tbody tr:nth-child(even) {
@@ -109,7 +109,7 @@
         a {
             color: #1a0dab;
             text-decoration: none;
-            font-family: 'Arial', sans-serif;
+            font-family: "Arial", sans-serif;
         }
 
         a:hover {
@@ -192,7 +192,7 @@
             if (storedData) {
                 const cvData = JSON.parse(storedData);
                 cvData.forEach(function(item, index) {
-                    addRowToTable(item.empresa, formatDateBR(item.dataEnvio), item.horaEnvio, item.status, item.plataforma, item.linkVaga, index);
+                    addRowToTable(item.empresa, item.dataEnvio, item.horaEnvio, item.status, item.plataforma, item.linkVaga, index);
                 });
             }
             updateMessage();
@@ -200,11 +200,6 @@
 
         function saveData(cvData) {
             localStorage.setItem('cvData', JSON.stringify(cvData));
-        }
-
-        function formatDateBR(dateStr) {
-            const [year, month, day] = dateStr.split('-');
-            return `${day}/${month}/${year}`;
         }
 
         function addRowToTable(empresa, dataEnvio, horaEnvio, status, plataforma, linkVaga, index) {
@@ -220,7 +215,7 @@
             const deleteCell = newRow.insertCell(6);
 
             empresaCell.textContent = empresa;
-            dataCell.textContent = dataEnvio;
+            dataCell.textContent = formatDateBR(dataEnvio);
             horaCell.textContent = horaEnvio;
 
             const statusSelect = document.createElement('select');
@@ -256,9 +251,7 @@
             const storedData = JSON.parse(localStorage.getItem('cvData'));
             storedData[index].status = newStatus;
             saveData(storedData);
-
-            const statusSelect = document.querySelector(`#cvTableBody tr:nth-child(${index + 1}) select`);
-            statusSelect.value = newStatus;
+            updateMessage();
         }
 
         function deleteRow(index) {
@@ -273,9 +266,18 @@
         }
 
         function countTodayEntries() {
-            const storedData = JSON.parse(localStorage.getItem('cvData')) || [];
-            const today = new Date().toISOString().split('T')[0];
-            return storedData.filter(item => item.dataEnvio === today).length;
+        const storedData = JSON.parse(localStorage.getItem('cvData')) || [];
+        const today = new Date();
+    
+        return storedData.filter(item => {
+        const [year, month, day] = item.dataEnvio.split('-');
+        const itemDate = new Date(year, month - 1, day);
+        return (
+            itemDate.getDate() === today.getDate() &&
+            itemDate.getMonth() === today.getMonth() &&
+            itemDate.getFullYear() === today.getFullYear()
+        );
+        }).length;
         }
 
         function updateMessage() {
@@ -303,15 +305,20 @@
             const storedData = localStorage.getItem('cvData');
             const cvData = storedData ? JSON.parse(storedData) : [];
 
-            addRowToTable(empresa, formatDateBR(dataEnvio), horaEnvio, status, plataforma, linkVaga, cvData.length);
-
             cvData.push({ empresa, dataEnvio, horaEnvio, status, plataforma, linkVaga });
             saveData(cvData);
+
+            addRowToTable(empresa, dataEnvio, horaEnvio, status, plataforma, linkVaga, cvData.length - 1);
 
             updateMessage();
 
             document.getElementById('cvForm').reset();
         });
+
+        function formatDateBR(dateStr) {
+            const [year, month, day] = dateStr.split('-');
+            return `${day}/${month}/${year}`;
+        }
     </script>
 
 </body>
